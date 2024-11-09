@@ -2521,8 +2521,14 @@ function event_loop_invasion(c) {
 		const HOUR_MS = 3600000; // 60 * 60 * 1000;
 		// 6 * 3600000 = 21600000
 		// Default an invasion every 1..2 hours
-		const [MIN_INVASION_COOLDOWN_MS = 1 * HOUR_MS, MAX_INVASION_COOLDOWN_MS = 2 * HOUR_MS, INVASION_CHANCE = 0.75] =
-			gMap.invasion.frequency || [];
+		// const [MIN_INVASION_COOLDOWN_MS = 1 * HOUR_MS, MAX_INVASION_COOLDOWN_MS = 2 * HOUR_MS, INVASION_CHANCE = 0.75] =
+		// 	gMap.invasion.frequency || [];
+		// debug
+		const [
+			MIN_INVASION_COOLDOWN_MS = 1000 * 60 * 10 /* 10 minute */,
+			MAX_INVASION_COOLDOWN_MS = 1000 * 60 * 30 /* 30 minutes */,
+			INVASION_CHANCE = 0.75,
+		] = gMap.invasion.frequency || [];
 
 		const NEXT_INVASION_COOLDOWN_MS =
 			Math.random() * (MAX_INVASION_COOLDOWN_MS - MIN_INVASION_COOLDOWN_MS) + MIN_INVASION_COOLDOWN_MS;
@@ -2624,11 +2630,13 @@ function event_loop_invasion(c) {
 
 		const aliveInvasionMonsters = instance.invasion.monsters.filter((m) => !m.rip && !m.dead);
 		event.c = aliveInvasionMonsters.length;
+		console.log(`${invasionMapKey} ${event.c} alive monsters`);
 
 		if (event.end && c > event.end) {
 			// FAILURE: Time has run out
 
 			// remove remaining alive invasion monsters and also count up coop points
+			console.log(`${invasionMapKey} removing ${event.c} alive ${event.mtype} with nospawn: true`);
 			for (const monster of aliveInvasionMonsters) {
 				remove_monster(monster, { nospawn: true, method: "disappear" });
 			}
