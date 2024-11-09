@@ -2605,6 +2605,7 @@ function event_loop_invasion(c) {
 
 			monster_map_def.grow = false;
 			monster_map_def.roam = false; // attempt to prevent phoenix from roaming
+			monster_map_def.norespawn = true; // prevent invasion monsters respawning when killed.
 
 			// E is broadcasted to the players
 			E[invasionMapKey] = event = {
