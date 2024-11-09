@@ -10975,6 +10975,7 @@ function remove_monster(target, args) {
 		!G.monsters[target.type].special &&
 		!target.special &&
 		!target.map_def.special &&
+		!target.map_def.norespawn &&
 		!target.pet &&
 		!target.spawn &&
 		!args.nospawn &&
