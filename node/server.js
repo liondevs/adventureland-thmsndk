@@ -12877,27 +12877,37 @@ function update_instance(instance) {
 						monster.going_y = map_def.boundary[1] + Math.random() * (map_def.boundary[3] - map_def.boundary[1]);
 					}
 					if (monster.irregular == 3) {
+						// TODO: don't think mode 3 is set anymore?
 						// new [01/03/19]
-						monster.m++;
+						monster.m++; // TODO: what does increasing m do?
+						server_log(`${monster.type} ${monster.id} Irregular 3 respawn`);
 						setTimeout(new_monster_f(monster.oin, monster.map_def, { last_state: monster }), 500);
 						server_log(`${monster.id} being respawned due to monster.irregular == 3`);
 						remove_monster(monster, { nospawn: true, method: "disappear" });
 					} else if (monster.irregular == 2) {
 						server_log("Irregular2 move for " + monster.id);
 						if (monster.in != monster.oin) {
+							server_log(`${monster.type} ${monster.id} Irregular 2 porting ${monster.in} != ${monster.oin}`);
 							port_monster(monster, { map: monster.oin, x: monster.going_x, y: monster.going_y, in: monster.oin });
 						} else {
+							server_log(`${monster.type} ${monster.id} Irregular 2 recalculating move`);
 							recalculate_move(monster);
 						}
 						monster.irregular = 1;
 					} else if (monster.irregular == 1) {
 						if (!can_move(monster)) {
-							monster.m++;
-							server_log("Irregular1 respawn: " + monster.id);
-							setTimeout(new_monster_f(monster.oin, monster.map_def, { last_state: monster }), 500);
-							remove_monster(monster, { nospawn: true, method: "disappear" });
+							monster.m++; // TODO: what does increasing m do?
+							if (monster.map_def.norespawn) {
+								server_log(
+									`${monster.type} ${monster.id} Irregular 1 (norespawn) porting ${monster.in} != ${monster.oin}`,
+								);
+							} else {
+								server_log(`${monster.type} ${monster.id} Irregular 1 respawn, can't move`);
+								setTimeout(new_monster_f(monster.oin, monster.map_def, { last_state: monster }), 500);
+								remove_monster(monster, { nospawn: true, method: "disappear" });
+							}
 						} else {
-							server_log("No longer irregular: " + monster.id);
+							server_log(`${monster.type} ${monster.id} No longer irregular`);
 							delete monster["irregular"];
 						}
 					}
